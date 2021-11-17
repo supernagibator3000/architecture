@@ -1,0 +1,25 @@
+version: '3.8'
+
+volumes:
+  pg-data:
+
+services:
+  postgres:
+    image: postgres:12.7-alpine
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+  
+  app:
+    build: ./
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - DB_PASSWORD=postgres
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
